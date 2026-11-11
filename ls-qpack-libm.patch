@@ -1,0 +1,21 @@
+# libls-qpack.so calls round() but is not linked with libm
+--- ls-qpack-2.7.0.orig/CMakeLists.txt
++++ ls-qpack-2.7.0/CMakeLists.txt
+@@ -31,6 +31,10 @@
+     $<INSTALL_INTERFACE:include>
+ )
+ target_sources(ls-qpack PRIVATE lsqpack.c)
++if(NOT WIN32)
++    # lsqpack.c calls round()
++    target_link_libraries(ls-qpack PRIVATE m)
++endif()
+ 
+ if(LSQPACK_XXH)
+     target_include_directories(ls-qpack PRIVATE deps/xxhash/)
+--- ls-qpack-2.7.0.orig/lsqpack.pc.in
++++ ls-qpack-2.7.0/lsqpack.pc.in
+@@ -10,3 +10,4 @@
+ Requires.private: @LSQPACK_DEPENDS@
+ Cflags: -I"${includedir}"
+ Libs: -L"${libdir}" -lls-qpack
++Libs.private: -lm

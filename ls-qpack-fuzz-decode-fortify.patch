@@ -1,0 +1,18 @@
+# fuzz-decode (test tool) turns optimization off, which breaks with _FORTIFY_SOURCE
+# https://github.com/litespeedtech/ls-qpack/commit/1aeb4f2c73a41318cb726bc1a3d603f43abe509e
+diff --git a/bin/fuzz-decode.c b/bin/fuzz-decode.c
+index 222167b..a215662 100644
+--- a/bin/fuzz-decode.c
++++ b/bin/fuzz-decode.c
+@@ -4,6 +4,11 @@
+  * forgoes several advanced options.
+  */
+ 
++/* _FORTIFY_SOURCE cannot be used with non-optimized code, and the code
++ * is using pragmas to disable optimization below
++ */
++#undef _FORTIFY_SOURCE
++
+ #ifdef WIN32
+ 
+ #include <stdio.h>
